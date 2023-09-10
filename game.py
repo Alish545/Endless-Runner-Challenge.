@@ -31,12 +31,12 @@ font = pygame.font.Font(None, 36)
 def spawn_obstacle(level):
     obstacle_width = 20
     obstacle_x = WIDTH
-    obstacle_speed = 5 if level == "easy" else 8
+    obstacle_speed = 5 if level == "medium" else 8
 
-    if level == "easy":
-        obstacle_height = random.randint(30, 100)
-        obstacle_top = 0
-    else:  # "difficult" level
+    if level == "medium":
+        obstacle_height = random.randint(20, 80)
+        obstacle_top = random.randint(0, HEIGHT - obstacle_height)
+    elif level == "difficult":
         obstacle_height = random.randint(10, 30)
         obstacle_top = random.randint(0, HEIGHT - obstacle_height)
 
@@ -45,40 +45,21 @@ def spawn_obstacle(level):
 # Function to display level selection screen
 def choose_level():
     screen.fill(WHITE)
-    easy_text = font.render("Easy (Press 'E')", True, RED)
+    medium_text = font.render("Medium (Press 'M')", True, RED)
     difficult_text = font.render("Difficult (Press 'D')", True, RED)
-    screen.blit(easy_text, (100, 100))
+    screen.blit(medium_text, (100, 100))
     screen.blit(difficult_text, (100, 150))
     pygame.display.flip()
 
     while True:
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_e:
-                    return "easy"
+                if event.key == pygame.K_m:
+                    return "medium"
                 elif event.key == pygame.K_d:
                     return "difficult"
                 elif event.key == pygame.K_q:
                     pygame.quit()
-
-# Function to display game over screen
-def game_over_screen():
-    screen.fill(WHITE)
-    game_over_text = font.render(f"Game Over! Your Score: {score}", True, RED)
-    play_again_text = font.render("Play Again (Press 'P')", True, RED)
-    exit_text = font.render("Exit (Press 'Q')", True, RED)
-    screen.blit(game_over_text, (50, 100))
-    screen.blit(play_again_text, (100, 150))
-    screen.blit(exit_text, (100, 200))
-    pygame.display.flip()
-
-    while True:
-        for event in pygame.event.get():
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_p:
-                    return True  # Play again
-                elif event.key == pygame.K_q:
-                    pygame.quit()  # Exit
 
 # Initial level selection
 level = choose_level()
@@ -132,10 +113,23 @@ while True:
         clock.tick(FPS)
 
     # Display game over screen and handle play again or exit
-    play_again = game_over_screen()
-    if play_again:
-        game_over = False
-        score = 0
-        level = choose_level()
-    else:
-        pygame.quit()
+    choose_level_text = font.render("Choose Level (Press 'L')", True, RED)
+    play_again_text = font.render("Play Again (Press 'P')", True, RED)
+    exit_text = font.render("Exit (Press 'Q')", True, RED)
+    screen.blit(choose_level_text, (100, 100))
+    screen.blit(play_again_text, (100, 150))
+    screen.blit(exit_text, (100, 200))
+    pygame.display.flip()
+
+    while game_over:
+        for event in pygame.event.get():
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_p:
+                    game_over = False
+                    score = 0
+                elif event.key == pygame.K_q:
+                    pygame.quit()
+                elif event.key == pygame.K_l:
+                    level = choose_level()
+                    game_over = False
+                    score = 0
